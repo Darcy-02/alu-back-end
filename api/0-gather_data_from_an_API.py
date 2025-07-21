@@ -1,31 +1,37 @@
 #!/usr/bin/python3
-# import libraries
-import sys
+"""Script to get todos for a user from API"""
+
 import requests
+import sys
 
-# get employee ID
-if __name__ == "__main__":
-    employee_id = int(sys.argv[1])
-    url = "https://jsonplaceholder.typicode.com/users/{}".format(employee_id)
-    todo_url = "https://jsonplaceholder.typicode.com/todos?userId={}".format(employee_id)
 
-    # Fetch user info
-    user_info = requests.get(url).json()
+def main():
+    """main function"""
+    user_id = int(sys.argv[1])
+    todo_url = 'https://jsonplaceholder.typicode.com/todos'
+    user_url = 'https://jsonplaceholder.typicode.com/users/{}'.format(user_id)
 
-    # Fetch todo list
-    todo_info = requests.get(todo_url).json()
+    response = requests.get(todo_url)
 
-    employee_name = user_info.get("name")
+    total_questions = 0
+    completed = []
+    for todo in response.json():
 
-    # Filter completed tasks
-    completed_tasks = [task for task in todo_info if task.get("completed")]
-    total_done = len(completed_tasks)
-    total_tasks = len(todo_info)
+        if todo['userId'] == user_id:
+            total_questions += 1
 
-    # Print the header
-    print("Employee {} is done with tasks({}/{}):".format(employee_name, total_done, total_tasks))
+            if todo['completed']:
+                completed.append(todo['title'])
 
-    # Print each completed task title
-    for task in completed_tasks:
-        print("\t {}".format(task.get("title")))
+    user_name = requests.get(user_url).json()['name']
+
+    printer = ("Employee {} is done with tasks({}/{}):".format(user_name,
+               len(completed), total_questions))
+    print(printer)
+    for q in completed:
+        print("\t {}".format(q))
+
+
+if __name__ == '__main__':
+    main()
 
