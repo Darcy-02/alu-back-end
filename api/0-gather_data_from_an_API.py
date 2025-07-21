@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 # import libraries
-import requests
 import sys
+import requests
 
 # get employee ID
 if __name__ == "__main__":
